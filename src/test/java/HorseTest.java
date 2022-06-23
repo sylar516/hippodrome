@@ -9,11 +9,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class HorseTest {
-    private final Horse horse2Param = new Horse("Horse", 1);
-    private final Horse horse3Param = new Horse("Horse", 1,1);
+    private static final Horse horse2Param = new Horse("Horse", 1);
+    private static final Horse horse3Param = new Horse("Horse", 1,1);
 
     @ParameterizedTest
-    @DisplayName("“естирование первого параметра (String name) конструктора Horse")
+    @DisplayName("“ест параметра name конструктора класса Horse")
     @Order(1)
     @ValueSource(strings = {"null", "", " "})
     public void constructorHorseFirstParamTest(String parameter) {
@@ -30,7 +30,7 @@ class HorseTest {
     }
 
     @Test
-    @DisplayName("“естирование второго параметра (double speed) конструктора Horse")
+    @DisplayName("“ест параметра speed конструктора класса Horse")
     @Order(2)
     public void constructorHorseSecondParamTest() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Horse("Horse", -1));
@@ -38,7 +38,7 @@ class HorseTest {
     }
 
     @Test
-    @DisplayName("“естирование третьего параметра (double distance) конструктора Horse")
+    @DisplayName("“ест параметра distance конструктора класса Horse")
     @Order(3)
     public void constructorHorseThirdParamTest() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Horse("Horse", 1, -1));
