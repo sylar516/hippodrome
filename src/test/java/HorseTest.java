@@ -9,17 +9,20 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class HorseTest {
+    private final Horse horse2Param = new Horse("Horse", 1);
+    private final Horse horse3Param = new Horse("Horse", 1,1);
+
     @ParameterizedTest
-    @DisplayName("Тестирование первого параметра конструктора Horse")
+    @DisplayName("Тестирование первого параметра (String name) конструктора Horse")
     @Order(1)
-    @ValueSource(strings = {"null", "", "   "})
-    public void createHorseFirstParam(String parameter) {
+    @ValueSource(strings = {"null", "", " "})
+    public void constructorHorseFirstParamTest(String parameter) {
         switch (parameter) {
             case "null" -> {
                 IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Horse(null, 1));
                 assertEquals("Name cannot be null.", exception.getMessage());
             }
-            case "", "  " -> {
+            case "", " " -> {
                 IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Horse(parameter, 1));
                 assertEquals("Name cannot be blank.", exception.getMessage());
             }
@@ -27,34 +30,39 @@ class HorseTest {
     }
 
     @Test
-    @DisplayName("Тестирование второго параметра конструктора Horse")
+    @DisplayName("Тестирование второго параметра (double speed) конструктора Horse")
     @Order(2)
-    public void createHorseSecondParam() {
+    public void constructorHorseSecondParamTest() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Horse("Horse", -1));
         assertEquals("Speed cannot be negative.", exception.getMessage());
     }
 
     @Test
-    @DisplayName("Тестирование третьего параметра конструктора Horse")
+    @DisplayName("Тестирование третьего параметра (double distance) конструктора Horse")
     @Order(3)
-    public void createHorseThirdParam() {
+    public void constructorHorseThirdParamTest() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Horse("Horse", 1, -1));
         assertEquals("Distance cannot be negative.", exception.getMessage());
     }
 
     @Test
-    void getName() {
+    void getNameTest() {
+        assertEquals("Horse", horse2Param.getName());
     }
 
     @Test
-    void getSpeed() {
+    void getSpeedTest() {
+        assertEquals(1, horse2Param.getSpeed());
     }
 
     @Test
-    void getDistance() {
+    void getDistanceTest() {
+        assertEquals(1, horse3Param.getDistance());
+        assertEquals(0, horse2Param.getDistance());
     }
 
+    //написать тест с моками
     @Test
-    void move() {
+    void moveTest() {
     }
 }
