@@ -1,10 +1,11 @@
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,6 +49,7 @@ class HippodromeTest {
     }
 
     @Test
+    @ExtendWith(MockitoExtension.class)
     @DisplayName("Тест метода move")
     @Order(3)
     void moveTest() {
