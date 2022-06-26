@@ -1,64 +1,72 @@
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.times;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class HippodromeTest {
-    private static List<Horse> horses;
-    private static Hippodrome hippodrome;
-
-    @BeforeAll
-    static void initMethod() {
-        horses = new ArrayList<>();
-        for (int i = 1; i <= 30; i++) {
-            horses.add(new Horse("Лошадь #" + i, i, i));
-        }
-        hippodrome = new Hippodrome(horses);
-    }
-
-    @ParameterizedTest
-    @DisplayName("Тест параметра horses конструктора класса Hippodrome")
+    @Test
+    @DisplayName("Тест констуктора - параметр horses со значением null")
     @Order(1)
-    @MethodSource("getStreamHorses")
-    void constructorHippodromeTest(List<Horse> list) {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Hippodrome(list));
-        if (list == null) {
-            assertEquals("Horses cannot be null.", exception.getMessage());
-        } else assertEquals("Horses cannot be empty.", exception.getMessage());
+    void constructorHorsesIsNullTest() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Hippodrome(null));
+        assertEquals("Horses cannot be null.", exception.getMessage());
     }
 
-    static Stream<List<Horse>> getStreamHorses() {
-        return Stream.of(null, new ArrayList<>());
+    @Test
+    @DisplayName("Тест констуктора - параметр horses - пустой список")
+    @Order(2)
+    void constructorHorsesIsEmptyTest() {
+        List<Horse> list = new ArrayList<>();
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Hippodrome(list));
+        assertEquals("Horses cannot be empty.", exception.getMessage());
     }
 
     @Test
     @DisplayName("Тест метода getHorses")
-    @Order(2)
+    @Order(3)
     void getHorsesTest() {
-        for (int i = 0; i < hippodrome.getHorses().size(); i++) {
-            assertSame(horses.get(i), hippodrome.getHorses().get(i));
+        List<Horse> horses = new ArrayList<>();
+        for (int i = 1; i <= 30; i++) {
+            horses.add(new Horse("Лошадь #" + i, i, i));
+        }
+        Hippodrome hippodrome = new Hippodrome(horses);
+
+        assertEquals(horses, hippodrome.getHorses());
+    }
+
+    @Test
+    @DisplayName("Тест метода move")
+    @Order(4)
+    void moveTest() {
+        List<Horse> horses = new ArrayList<>();
+        for (int i = 0; i < 50; i++) {
+            Horse horse = Mockito.mock(Horse.class);
+            horses.add(horse);
+        }
+
+        Hippodrome hippodrome = new Hippodrome(horses);
+        hippodrome.move();
+        for (Horse horse : hippodrome.getHorses()) {
+            Mockito.verify(horse, times(1)).move();
         }
     }
 
     @Test
-    @ExtendWith(MockitoExtension.class)
-    @DisplayName("Тест метода move")
-    @Order(3)
-    void moveTest() {
-    }
-
-    @Test
     @DisplayName("Тест метода getWinner")
-    @Order(4)
+    @Order(5)
     void getWinnerTest() {
-        assertEquals(30, hippodrome.getWinner().getDistance());
+        List<Horse> horses = new ArrayList<>();
+        horses.add(new Horse("Лошадь №1", 1, 10));
+        horses.add(new Horse("Лошадь №2", 1, 5));
+        horses.add(new Horse("Лошадь №3", 1, 1));
+        Hippodrome hippodrome = new Hippodrome(horses);
+
+        assertEquals(horses.get(0), hippodrome.getWinner());
     }
 }

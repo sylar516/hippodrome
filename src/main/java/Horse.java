@@ -47,4 +47,13 @@ public class Horse {
     public static double getRandomDouble(double min, double max) {
         return (Math.random() * (max - min)) + min;
     }
+
+    @Override
+    public String toString() {
+        return "Horse{" +
+                "name='" + name + '\'' +
+                ", speed=" + speed +
+                ", distance=" + distance +
+                '}';
+    }
 }

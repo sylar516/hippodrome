@@ -1,17 +1,15 @@
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-
-import java.util.concurrent.TimeUnit;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class MainTest {
 
     @Disabled
     @Test
+    @DisplayName("Тест метода main")
     @Timeout(value = 22)
     void mainTest() throws Exception {
-        Main.main(new String[0]);
+        Main.main(null);
     }
 }

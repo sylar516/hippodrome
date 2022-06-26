@@ -1,82 +1,105 @@
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.mockito.Spy;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class HorseTest {
-    private static final Horse horse2Param = new Horse("Horse", 1);
-    private static final Horse horse3Param = new Horse("Horse", 1,1);
-
-    @ParameterizedTest
-    @DisplayName("Тест параметра name конструктора класса Horse")
+    @Test
+    @DisplayName("Тест констуктора - параметр name со значением null")
     @Order(1)
-    @ValueSource(strings = {"null", "", " "})
-    public void constructorHorseFirstParamTest(String parameter) {
-        switch (parameter) {
-            case "null" -> {
-                IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Horse(null, 1));
-                assertEquals("Name cannot be null.", exception.getMessage());
-            }
-            case "", " " -> {
-                IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Horse(parameter, 1));
-                assertEquals("Name cannot be blank.", exception.getMessage());
-            }
-        }
+    public void constructorNameIsNullTest() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Horse(null, 1));
+        assertEquals("Name cannot be null.", exception.getMessage());
     }
 
-    @Test
-    @DisplayName("Тест параметра speed конструктора класса Horse")
+    @ParameterizedTest
+    @DisplayName("Тест констуктора - параметр name - пустая строка")
     @Order(2)
-    public void constructorHorseSecondParamTest() {
+    @ValueSource(strings = {"", " ", "\t", "\n"})
+    public void constructorNameIsBlankTest(String parameter) {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Horse(parameter, 1));
+        assertEquals("Name cannot be blank.", exception.getMessage());
+    }
+
+
+    @Test
+    @DisplayName("Тест констуктора - параметр speed")
+    @Order(3)
+    public void constructorHorseSpeedParamTest() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Horse("Horse", -1));
         assertEquals("Speed cannot be negative.", exception.getMessage());
     }
 
     @Test
-    @DisplayName("Тест параметра distance конструктора класса Horse")
-    @Order(3)
-    public void constructorHorseThirdParamTest() {
+    @DisplayName("Тест констуктора - параметр distance")
+    @Order(4)
+    public void constructorHorseDistanceParamTest() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Horse("Horse", 1, -1));
         assertEquals("Distance cannot be negative.", exception.getMessage());
     }
 
     @Test
+    @DisplayName("Тест метода getName")
+    @Order(5)
     void getNameTest() {
-        assertEquals("Horse", horse2Param.getName());
+        Horse horse = new Horse("Horse", 1);
+        assertEquals("Horse", horse.getName());
     }
 
     @Test
+    @DisplayName("Тест метода getSpeed")
+    @Order(6)
     void getSpeedTest() {
-        assertEquals(1, horse2Param.getSpeed());
+        Horse horse = new Horse("Horse", 1);
+        assertEquals(1, horse.getSpeed());
     }
 
     @Test
+    @DisplayName("Тест метода getDistance")
+    @Order(7)
     void getDistanceTest() {
-        assertEquals(1, horse3Param.getDistance());
-        assertEquals(0, horse2Param.getDistance());
+        Horse horseWithDistance = new Horse("Horse", 1, 1);
+        assertEquals(1, horseWithDistance.getDistance());
+    }
+
+    @Test
+    @DisplayName("Тест метода getDistance с нулевой дистанцией")
+    @Order(8)
+    void getZeroDistanceTest() {
+        Horse horseZeroDistance = new Horse("Horse", 1);
+        assertEquals(0, horseZeroDistance.getDistance());
     }
 
     //написать тест с моками
     @Test
-    @ExtendWith(MockitoExtension.class)
-    void moveTest(double min, double max) {
-        try(MockedStatic<Horse> horseMockedStatic = Mockito.mockStatic(Horse.class)) {
-            horseMockedStatic.when(() -> Horse.getRandomDouble(min, max)).thenReturn(0.5);
-            horse2Param.move();
-            assertEquals(0.5, horse2Param.getDistance());
+    @DisplayName("Тест метода move - вызов метода GetRandomDouble с параметрами 0.2 и 0.9")
+    @Order(9)
+    void moveInvokeGetRandomDoubleTest() {
+        try (MockedStatic<Horse> horseMockedStatic = Mockito.mockStatic(Horse.class)) {
+            Horse horse = new Horse("Horse", 1);
+            horse.move();
+            horseMockedStatic.verify(() -> Horse.getRandomDouble(0.2, 0.9));
         }
     }
+
+    @ParameterizedTest
+    @DisplayName("Тест метода move - изменение значения параметра distance")
+    @Order(10)
+    @ValueSource(doubles = {0.3, 0.5, 0.8})
+    void moveDistanceValueTest(double value) {
+        try (MockedStatic<Horse> horseMockedStatic = Mockito.mockStatic(Horse.class)) {
+            Horse horse = new Horse("Horse", 2, 2);
+            horseMockedStatic.when(() -> Horse.getRandomDouble(0.2, 0.9)).thenReturn(value);
+
+            double expectedDistance = 2 + 2 * value;
+            horse.move();
+            assertEquals(expectedDistance, horse.getDistance());
+        }
+    }
+
 }
