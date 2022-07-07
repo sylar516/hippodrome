@@ -2,15 +2,15 @@ import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
-//        private static final Logger logger = Logger.getLogger(Main.class);
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws Exception {
-        PropertyConfigurator.configure("./src/main/resources/log4j.properties");
+//        PropertyConfigurator.configure("E:\\IDEA_projects\\hippodrome\\src\\main\\resources\\log4j.properties");
 
         List<Horse> horses = List.of(
                 new Horse("Буцефал", 2.4),
@@ -22,7 +22,7 @@ public class Main {
                 new Horse("Вишня", 3)
         );
         Hippodrome hippodrome = new Hippodrome(horses);
-        logger.info("Начало скачек. Количество участников: 7");
+        logger.info(String.format("Начало скачек. Количество участников: %s", horses.size()));
 
         for (int i = 0; i < 100; i++) {
             hippodrome.move();
@@ -32,9 +32,10 @@ public class Main {
 
         String winnerName = hippodrome.getWinner().getName();
         System.out.println("Победил " + winnerName + "!");
+        logger.info(String.format("Окончание скачек. Победитель: %s", hippodrome.getWinner().getName()));
     }
 
-    private static void watch(Hippodrome hippodrome) throws Exception {
+    private static void watch(Hippodrome hippodrome) {
         hippodrome.getHorses().stream()
                 .map(horse -> ".".repeat((int) horse.getDistance()) + horse.getName())
                 .forEach(System.out::println);
